@@ -21,13 +21,6 @@ class Voxel(Button):
             color = color
         )
 
-    def input(self,key):
-        if self.hovered:
-            if key == 'left mouse down':
-                Voxel(position = self.position + mouse.normal)
-            if key == 'right mouse down':
-                destroy(self)
-
 class Sky(Entity):
     def __init__(self):
         super().__init__(
@@ -40,6 +33,24 @@ class Sky(Entity):
 for z in range(20):
     for x in range(20):
         voxel = Voxel(position = (x,0,z))
+
+class rig(Button):
+    def __init__(self, position = (17, -0.1, 0.3)):
+        super().__init__(
+            parent = scene,
+            position = position,
+            origin_y = 0.5,
+            model = 'assets/oil.obj',
+            color = color.gold,
+            scale = 0.03,
+            rotation_y = 270,
+            rotation_x = 270,
+        )
+        self.add = 5
+    def update(self):
+        global money
+        money += self.add*time.dt
+
 
 class clicker(Button):
     def __init__(self):
@@ -65,13 +76,13 @@ class clicker(Button):
             levelText.color = color.green
         else:
             levelText.color = color.red
-
 player = FirstPersonController()
 screenMoney = Text(text = f"${money}", x = -0.85, y = 0.47)
 levelText = Text(text = f"Money/click: {add}", x = -0.85, y = 0.42)
 def update():
-    screenMoney.text = f"${money}"
+    screenMoney.text = f"${format(money, ',.2f')}"
     levelText.text = f"Money/click: {add}"
 sky = Sky()
 dollars = clicker()
+test = rig()
 app.run()
