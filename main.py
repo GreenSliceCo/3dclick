@@ -1,25 +1,33 @@
 from ursina import *
 from ursina.prefabs.first_person_controller import FirstPersonController
 money = 0
-add = 2
-upCost = 100
 app = Ursina()
-
+monitor = ["polygon", "dogecoin", "NEAR Protocol", "Cronos", "Cosmos", "Leo",
+           "Algorand", "Decentraland", "Stellar", "PancakeSwap",
+           "WEMIX TOKEN", "SENSO", "The Sandbox", "Magic Internet Money"]
+site = "https://coinranking.com/"
 window.fps_counter.enabled = False
 window.exit_button.visible = False
 
 
 class Voxel(Button):
-    def __init__(self, position = (0,0,0), scale = 1, color = color.color(0,0,random.uniform(0.9,1))):
+    def __init__(self, position = (0,0,0), scale = 1, base = color.color(0,0,random.uniform(0.9,1))):
         super().__init__(
             parent = scene,
             position = position,
             model = 'cube',
             origin_y = 0.5,
             texture = 'white_cube',
+            highlight_color = color.lime,
             scale = scale,
-            color = color
+            color = base
         )
+    def input(self, key):
+        if self.hovered:
+            global factory, money
+            if key == 'left mouse down' and money >= 5_000:
+                factory = rig(position = self.position)
+                money -= 5_000
 
 class Sky(Entity):
     def __init__(self):
@@ -41,7 +49,7 @@ class rig(Button):
             position = position,
             origin_y = 0.5,
             model = 'assets/oil.obj',
-            color = color.gold,
+            color = color.grey,
             scale = 0.03,
             rotation_y = 270,
             rotation_x = 270,
@@ -53,36 +61,35 @@ class rig(Button):
 
 
 class clicker(Button):
-    def __init__(self):
+    def __init__(self, position = (8, 1.5, 8), add = 0.14, color = color.gold):
         super().__init__(
             parent = scene,
-            position = (8, 1.5, 8),
+            position = position,
             scale = 3,
-            color = color.gold,
+            color = color,
             origin_y = 0.5,
             model = 'cube',
             texture = 'assets/doge.jpg',
         )
+        self.add = add
     def input(self, key):
-        global money,add,level,upCost
+        global money
+        add = self.add
         if self.hovered:
             if key == 'left mouse down':
                 money += add
-            if key == 'u' and money >= upCost:
-                money -= upCost
-                upCost = int(upCost*1.5)
-                add = int(add*1.5)
-        if money >= upCost:
-            levelText.color = color.green
-        else:
-            levelText.color = color.red
-player = FirstPersonController()
-screenMoney = Text(text = f"${money}", x = -0.85, y = 0.47)
-levelText = Text(text = f"Money/click: {add}", x = -0.85, y = 0.42)
+            if key == 'u' and money >= 10:
+                pass
+        # if money >= upCost:
+        #     levelText.color = color.green
+        # else:
+        #     levelText.color = color.red
+displayDollars = Text(text = f"${money}", x = -0.85, y = 0.47)
+# levelText = Text(text = f"Money/click: {dollars.add}", x = -0.85, y = 0.42)
 def update():
-    screenMoney.text = f"${format(money, ',.2f')}"
-    levelText.text = f"Money/click: {add}"
-sky = Sky()
+    displayDollars.text = f"${format(money, ',.2f')}"
+#     levelText.text = f"Money/click: {dollars.add}"
+player = FirstPersonController()
 dollars = clicker()
-test = rig()
+sky = Sky()
 app.run()
